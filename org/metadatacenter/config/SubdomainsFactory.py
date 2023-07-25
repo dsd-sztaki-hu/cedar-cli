@@ -49,6 +49,8 @@ class SubdomainsFactory:
 
         subdomains.add_static('shared', static_location='cedar-shared-data')
 
+        subdomains.add_microservice('arp-dataverse')
+
         return subdomains
 
 # RENAME main to cedar in SSL, NGINX , docker
