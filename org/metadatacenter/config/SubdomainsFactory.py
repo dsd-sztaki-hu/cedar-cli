@@ -51,7 +51,6 @@ class SubdomainsFactory:
 
         # ARP specific
         subdomains.add_microservice('arp-dataverse')
-        subdomains.add_frontend('cedardev')
 
         return subdomains
 
