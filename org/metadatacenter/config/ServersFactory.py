@@ -1,6 +1,6 @@
 from org.metadatacenter.model.CheckRunning import CheckRunning
 from org.metadatacenter.model.Servers import Servers
-
+import os
 
 class ServersFactory:
 
@@ -30,7 +30,7 @@ class ServersFactory:
         servers.add_infra('OpenSearch-REST', 9200)
         servers.add_infra('OpenSearch-Transport', 9300, check_running=CheckRunning.OPEN_PORT)
         servers.add_infra('NGINX', 80)
-        servers.add_infra('Keycloak', 8080)
+        servers.add_infra('Keycloak', int(os.getenv('CEDAR_KEYCLOAK_HTTP_PORT')))
         servers.add_infra('Neo4j', 7474)
         servers.add_infra('Redis-persistent', 6379, check_running=CheckRunning.OPEN_PORT)
         servers.add_infra('MySQL', 3306, check_running=CheckRunning.OPEN_PORT)
