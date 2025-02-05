@@ -52,7 +52,7 @@ class SubdomainsFactory:
         # ARP specific
         subdomains.add_microservice('arp-dataverse')
         # These are for the demo installation, when we access services via the CEDAR nginx
-        subdomains.add_microservice('repo')
+        subdomains.add_microservice('dataverse')
         subdomains.add_microservice('search')
 
         return subdomains
