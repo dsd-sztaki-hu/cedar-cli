@@ -29,13 +29,6 @@ class ReposFactory:
                             [V.POM_OWN, V.POM_PARENT], is_library=True))
         repos.add_repo(Repo("cedar-rest-library", RepoType.JAVA, ArtifactType.MAVEN, [V.POM_OWN, V.POM_PARENT], is_library=True))
 
-        repos.add_repo(Repo("cedar-archetype-exporter", RepoType.JAVA, ArtifactType.MAVEN,
-                            [V.POM_OWN, V.POM_PARENT], is_client=True))
-        repos.add_repo(Repo("cedar-archetype-instance-reader", RepoType.JAVA, ArtifactType.MAVEN,
-                            [V.POM_OWN, V.POM_PARENT], is_client=True))
-        repos.add_repo(Repo("cedar-archetype-instance-writer", RepoType.JAVA, ArtifactType.MAVEN,
-                            [V.POM_OWN, V.POM_PARENT], is_client=True))
-
         repos.add_repo(Repo("cedar-artifact-server",
                             RepoType.JAVA, ArtifactType.MAVEN, [V.POM_OWN, V.POM_PARENT], is_microservice=True))
         repos.add_repo(Repo("cedar-messaging-server", RepoType.JAVA, ArtifactType.MAVEN, [V.POM_OWN, V.POM_PARENT], is_microservice=True))
@@ -58,6 +51,7 @@ class ReposFactory:
         repos.add_repo(Repo("cedar-microservice-libraries", RepoType.JAVA, ArtifactType.MAVEN, [V.POM_OWN, V.POM_PARENT]))
         repos.add_repo(Repo("cedar-admin-tool", RepoType.JAVA, ArtifactType.MAVEN, [V.POM_OWN, V.POM_PARENT]))
         repos.add_repo(Repo("cedar-cadsr-tools", RepoType.JAVA, ArtifactType.MAVEN, [V.POM_OWN, V.POM_PARENT]))
+        repos.add_repo(Repo("cedar-model-library-roundtrip", RepoType.JAVA, ArtifactType.MAVEN, [V.POM_OWN, V.POM_PARENT]))
 
         repos.add_repo(Repo("cedar-template-editor", RepoType.ANGULAR_JS, ArtifactType.NPM, [V.PACKAGE_OWN], is_frontend=True))
 
@@ -121,42 +115,51 @@ class ReposFactory:
         repos.add_relation(openview_src_dist_relation)
         repos.add_repo(openview_multi)
 
-        cee_demo_angular_multi = Repo("cedar-cee-demo", RepoType.MULTI, ArtifactType.NONE, [], is_frontend=True)
+        cee_component_demo_multi = Repo("cedar-component-demo", RepoType.MULTI, ArtifactType.NONE, [], is_frontend=True)
         cee_demo_angular_src = Repo("cedar-cee-demo-angular-src", RepoType.ANGULAR, ArtifactType.NONE,
                                     [V.PACKAGE_OWN, V.PACKAGE_LOCK_OWN, V.PACKAGE_LOCK_PACKAGES_OWN], is_frontend=True)
         cee_demo_angular_dist = Repo("cedar-cee-demo-angular-dist", RepoType.ANGULAR_DIST, ArtifactType.NPM,
-                                     [V.PACKAGE_OWN], is_frontend=True)
+                                     [V.PACKAGE_OWN, V.PACKAGE_LOCK_OWN, V.PACKAGE_LOCK_PACKAGES_OWN], is_frontend=True)
         cee_docs_angular_src = Repo("cedar-cee-docs-angular-src", RepoType.ANGULAR, ArtifactType.NONE,
                                     [V.PACKAGE_OWN, V.PACKAGE_LOCK_OWN, V.PACKAGE_LOCK_PACKAGES_OWN], is_frontend=True)
         cee_docs_angular_dist = Repo("cedar-cee-docs-angular-dist", RepoType.ANGULAR_DIST, ArtifactType.NPM,
-                                     [V.PACKAGE_OWN], is_frontend=True)
+                                     [V.PACKAGE_OWN, V.PACKAGE_LOCK_OWN, V.PACKAGE_LOCK_PACKAGES_OWN], is_frontend=True)
+        cee_demo_ember_src = Repo("cedar-cee-demo-ember-src", RepoType.EMBER, ArtifactType.NONE,
+                                    [V.PACKAGE_OWN, V.PACKAGE_LOCK_OWN, V.PACKAGE_LOCK_PACKAGES_OWN], is_frontend=True)
+        cav_demo_js_src = Repo("cedar-cav-demo-js-src", RepoType.ANGULAR, ArtifactType.NONE,
+                                    [V.PACKAGE_OWN, V.PACKAGE_LOCK_OWN, V.PACKAGE_LOCK_PACKAGES_OWN], is_frontend=True)
 
-        cee_demo_angular_multi.add_sub_repo(cee_demo_angular_src)
-        cee_demo_angular_multi.add_sub_repo(cee_demo_angular_dist)
+        cee_component_demo_multi.add_sub_repo(cee_demo_angular_src)
+        cee_component_demo_multi.add_sub_repo(cee_demo_angular_dist)
         cee_demo_angular_src_dist_relation = RepoRelation(cee_demo_angular_src, RepoRelationType.IS_SOURCE_OF, cee_demo_angular_dist)
         repos.add_relation(cee_demo_angular_src_dist_relation)
 
-        cee_demo_angular_multi.add_sub_repo(cee_docs_angular_src)
-        cee_demo_angular_multi.add_sub_repo(cee_docs_angular_dist)
+        cee_component_demo_multi.add_sub_repo(cee_docs_angular_src)
+        cee_component_demo_multi.add_sub_repo(cee_docs_angular_dist)
         cee_docs_angular_src_dist_relation = RepoRelation(cee_docs_angular_src, RepoRelationType.IS_SOURCE_OF, cee_docs_angular_dist)
         repos.add_relation(cee_docs_angular_src_dist_relation)
 
-        repos.add_repo(cee_demo_angular_multi)
+        cee_component_demo_multi.add_sub_repo(cee_demo_ember_src)
+        cee_component_demo_multi.add_sub_repo(cav_demo_js_src)
+
+        repos.add_repo(cee_component_demo_multi)
 
         embeddable_editor = Repo("cedar-embeddable-editor", RepoType.ANGULAR, ArtifactType.NONE,
-                                 [V.PACKAGE_OWN, V.PACKAGE_LOCK_OWN, V.PACKAGE_LOCK_PACKAGES_OWN], is_frontend=True,
+                                 [V.PACKAGE_OWN, V.PACKAGE_LOCK_OWN, V.PACKAGE_LOCK_PACKAGES_OWN,
+                                  V.DIST_NPM_PACKAGE_OWN, V.DIST_NPM_PACKAGE_LOCK_OWN, V.DIST_NPM_PACKAGE_LOCK_PACKAGES_OWN], is_frontend=True,
                                  allow_different_version=True, skip_from_release=True)
         repos.add_repo(embeddable_editor)
 
         # FKA cedar-metadata-form
         artifact_viewer = Repo("cedar-artifact-viewer", RepoType.ANGULAR, ArtifactType.NONE,
-                               [V.PACKAGE_OWN, V.PACKAGE_LOCK_OWN, V.PACKAGE_LOCK_PACKAGES_OWN], is_frontend=True,
+                               [V.PACKAGE_OWN, V.PACKAGE_LOCK_OWN, V.PACKAGE_LOCK_PACKAGES_OWN,
+                                V.DIST_NPM_PACKAGE_OWN, V.DIST_NPM_PACKAGE_LOCK_OWN, V.DIST_NPM_PACKAGE_LOCK_PACKAGES_OWN], is_frontend=True,
                                allow_different_version=True, skip_from_release=True)
         repos.add_repo(artifact_viewer)
 
-        component_distribution = Repo("cedar-component-distribution", RepoType.ANGULAR_DIST, ArtifactType.NPM,
-                                      [V.PACKAGE_OWN], is_frontend=True)
-        repos.add_repo(component_distribution)
+        content_distribution = Repo("cedar-content-distribution", RepoType.ANGULAR, ArtifactType.NPM,
+                                      [V.PACKAGE_OWN, V.PACKAGE_LOCK_OWN, V.PACKAGE_LOCK_PACKAGES_OWN], is_frontend=True)
+        repos.add_repo(content_distribution)
 
         embeddable_editor_dist_own_relation = RepoRelation(embeddable_editor, RepoRelationType.IS_SOURCE_OF, embeddable_editor,
                                                            parameters={
@@ -174,6 +177,27 @@ class ReposFactory:
 
         repos.add_relation(embeddable_editor_dist_own_relation)
         repos.add_relation(artifact_viewer_dist_own_relation)
+
+        model_typescript_library = Repo("cedar-model-typescript-library", RepoType.TYPESCRIPT, ArtifactType.NPM,
+                                 [V.PACKAGE_OWN, V.PACKAGE_LOCK_OWN, V.PACKAGE_LOCK_PACKAGES_OWN,
+                                  V.DIST_NPM_PACKAGE_OWN, V.DIST_NPM_PACKAGE_LOCK_OWN, V.DIST_NPM_PACKAGE_LOCK_PACKAGES_OWN], is_frontend=True,
+                                 allow_different_version=True, skip_from_release=True)
+        repos.add_repo(model_typescript_library)
+
+        model_typescript_library_demo = Repo("cedar-model-typescript-library-demo", RepoType.TYPESCRIPT, ArtifactType.NPM,
+                                 [V.PACKAGE_OWN, V.PACKAGE_LOCK_OWN, V.PACKAGE_LOCK_PACKAGES_OWN,
+                                  V.DIST_NPM_PACKAGE_OWN, V.DIST_NPM_PACKAGE_LOCK_OWN, V.DIST_NPM_PACKAGE_LOCK_PACKAGES_OWN], is_frontend=True,
+                                 allow_different_version=True, skip_from_release=True)
+        repos.add_repo(model_typescript_library_demo)
+
+        repos.add_repo(Repo("cedar-model-typescript-library-python", RepoType.PYTHON, ArtifactType.NONE, []))
+
+        model_typescript_library_roundtrip = Repo("cedar-model-typescript-library-roundtrip", RepoType.TYPESCRIPT, ArtifactType.NPM,
+                                 [V.PACKAGE_OWN, V.PACKAGE_LOCK_OWN, V.PACKAGE_LOCK_PACKAGES_OWN,
+                                  V.DIST_NPM_PACKAGE_OWN, V.DIST_NPM_PACKAGE_LOCK_OWN, V.DIST_NPM_PACKAGE_LOCK_PACKAGES_OWN], is_frontend=True,
+                                 allow_different_version=True, skip_from_release=True, skip_npm_install=True)
+        repos.add_repo(model_typescript_library_roundtrip)
+
 
         repos.add_repo(Repo("cedar-mkdocs", RepoType.MKDOCS, ArtifactType.NONE, []))
         repos.add_repo(Repo("cedar-mkdocs-developer", RepoType.MKDOCS, ArtifactType.NONE, [], is_private=True))

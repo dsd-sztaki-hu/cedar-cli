@@ -10,7 +10,7 @@ from org.metadatacenter.worker.Worker import Worker
 
 console = Console()
 
-FS_TYPE_DIR = '🗂️  dir'
+FS_TYPE_DIR = '📁 dir'
 FS_TYPE_FILE = '📄 file'
 RECOGNIZED_AS_CEDAR_REPO = 'CEDAR repo'
 STATUS_ICON_OK = '✅'
@@ -21,6 +21,7 @@ STATUS_MISSING = 'missing'
 STATUS_UNKNOWN = 'unknown'
 
 KNOWN_FS = {
+    'archive': 'Known CEDAR archive folder',
     'neo4j': 'Neo4j installation',
     'keycloak': 'Keycloak installation',
     'CEDAR_CA': 'CEDAR CA working dir',
@@ -32,9 +33,11 @@ KNOWN_FS = {
     'tmp': 'Temporary dir',
     'set-env-internal.sh': 'Known CEDAR shell script',
     'set-env-external.sh': 'Known CEDAR shell script',
-    'cedar-profile-native-develop.sh': 'Known CEDAR shell script'
+    'cedar-profile-native-develop.sh': 'Known CEDAR shell script',
+    'cedar-profile-pre-production-centos.sh': 'Known CEDAR shell script',
+    'cedar-profile-production-centos.sh': 'Known CEDAR shell script',
+    'cedar-profile-staging-centos.sh': 'Known CEDAR shell script'
 }
-
 
 class RepoWorker(Worker):
     def __init__(self):
@@ -62,7 +65,7 @@ class RepoWorker(Worker):
         is_private = STATUS_ICON_OK if repo.is_private else ""
         for_docker = STATUS_ICON_OK if repo.for_docker else ""
         is_frontend = STATUS_ICON_OK if repo.is_frontend else ""
-        name = repo.parent_repo.name + "️ ➡️  " + repo.name if repo.is_sub_repo else repo.name
+        name = repo.parent_repo.name + ' ⮕ ' + repo.name if repo.is_sub_repo else repo.name
         table.add_row(name, repo.repo_type, is_library, is_client, is_microservice, is_frontend, is_private, for_docker)
 
     @staticmethod
@@ -125,10 +128,10 @@ class RepoWorker(Worker):
             if entry.status == STATUS_OK:
                 cnt_ok += 1
             elif entry.status == STATUS_UNKNOWN:
-                cnt_unknown +=1
+                cnt_unknown += 1
                 unknown_list.append(entry.display_name)
             elif entry.status == STATUS_MISSING:
-                cnt_missing +=1
+                cnt_missing += 1
                 missing_list.append(entry.display_name)
 
         caption = str(cnt_ok) + " object/files recognized"

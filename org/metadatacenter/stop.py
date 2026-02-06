@@ -27,6 +27,26 @@ def microservice_all():
     StopMicroserviceWorker.all()
 
 
+@app.command("java")
+def java_all():
+    StopMicroserviceWorker.all()
+
+
 @app.command("frontends")
 def frontend_all():
     StopFrontendWorker.all()
+
+
+@app.command("uis")
+def ui_all():
+    StopFrontendWorker.all()
+
+
+@app.command("kk")
+def infra_kk():
+    StopInfrastructureWorker.keycloak()
+
+
+@app.command("keycloak")
+def infra_keycloak():
+    infra_kk()
