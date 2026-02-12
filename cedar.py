@@ -1,6 +1,6 @@
 import typer
 
-from org.metadatacenter import git, server, build, deploy, clean, repo, env, release, start, stop, check, docker, dev, cert, prod
+from org.metadatacenter import arp, git, server, build, deploy, clean, repo, env, release, start, stop, check, docker, dev, cert, prod
 from org.metadatacenter.util.GlobalContext import GlobalContext
 from org.metadatacenter.worker.CheatWorker import CheatWorker
 from org.metadatacenter.worker.ServerWorker import ServerWorker
@@ -9,6 +9,7 @@ GlobalContext()
 
 app = typer.Typer(no_args_is_help=True)
 app.add_typer(repo.app, name="repo", help="Configured repo info...")
+app.add_typer(arp.app, name="arp", help="ARP (dsd fork) operations...")
 app.add_typer(git.app, name="git", help="Git operations on all repos...")
 app.add_typer(server.app, name="server", help="Server status...")
 app.add_typer(build.app, name="build", help="Build various components...")
