@@ -90,7 +90,9 @@ class ArpGitWorker:
             ))
             raise SystemExit(1)
 
-    def _run_fork_detect_and_checkout(self, cedar_version: str, arp_suffix: str) -> None:
+    def _run_fork_detect_and_checkout(
+        self, cedar_version: str, arp_suffix: str, report_format: str = "override"
+    ) -> None:
         """Run Phase 2 (fork detection), Phase 3 (checkout dsd), Phase 4 (report)."""
         expected_branch = f"arp-{cedar_version}{arp_suffix}"
         repo_list = GlobalContext.repos.get_list_top()
@@ -150,6 +152,7 @@ class ArpGitWorker:
             wrong_naming=wrong_naming,
             checked_out_ok=checked_out_ok,
             checked_out_failed=checked_out_failed,
+            report_format=report_format,
         )
 
     def override(self):
@@ -157,7 +160,6 @@ class ArpGitWorker:
         cedar_version = os.environ[Const.CEDAR_VERSION]
         arp_suffix = os.environ[Const.ARP_BRANCH_SUFFIX]
         expected_branch = f"arp-{cedar_version}{arp_suffix}"
-        release_branch = f"release-{cedar_version}"
 
         console.print(Panel(
             f"ARP Git Override\n"
@@ -167,14 +169,6 @@ class ArpGitWorker:
             title="Configuration",
             style=Style(color="blue"),
         ))
-
-        console.print()
-        console.print("[bold]Phase 1: Cloning all repos...[/bold]")
-        self.git_worker.clone_all()
-
-        console.print()
-        console.print(f"[bold]Phase 1: Checking out {release_branch}...[/bold]")
-        self.git_worker.checkout(release_branch)
 
         console.print()
         console.print("[bold]Phase 2: Detecting dsd forks...[/bold]")
@@ -209,8 +203,16 @@ class ArpGitWorker:
         self.git_worker.checkout(release_branch)
 
         console.print()
+        console.print(f"[bold]Phase 1: Checking out cedar-cli to {expected_branch} (contains fork detection code)...[/bold]")
+        cedar_cli_repo = GlobalContext.repos.map.get("cedar-cli")
+        if cedar_cli_repo:
+            cwd = Util.get_wd(cedar_cli_repo)
+            dsd_url = f"{DSD_BASE}cedar-cli.git"
+            self._checkout_dsd_branch(cwd, expected_branch, dsd_url, "cedar-cli")
+
+        console.print()
         console.print("[bold]Phase 2: Detecting dsd forks...[/bold]")
-        self._run_fork_detect_and_checkout(cedar_version, arp_suffix)
+        self._run_fork_detect_and_checkout(cedar_version, arp_suffix, report_format="upgrade")
 
     def _checkout_dsd_branch(
         self, cwd: str, branch_name: str, dsd_url: str, repo_name: str
@@ -249,6 +251,7 @@ class ArpGitWorker:
         wrong_naming: list,
         checked_out_ok: list,
         checked_out_failed: list,
+        report_format: str = "override",
     ):
         console.print()
         console.print(Panel(
@@ -258,33 +261,46 @@ class ArpGitWorker:
         ))
         console.print()
 
-        if has_fork_correct:
-            console.print("[bold green]Has fork + correct branch ({})[/bold green]".format(expected_branch))
-            for repo in sorted(has_fork_correct):
-                console.print("  " + repo)
-            console.print()
+        if report_format == "upgrade":
+            if checked_out_ok:
+                console.print("[bold green]Checked out from dsd[/bold green]")
+                for repo in sorted(checked_out_ok):
+                    console.print("  " + repo)
+                console.print()
 
-        if no_fork:
-            console.print("[bold yellow]No fork[/bold yellow]")
-            for repo in sorted(no_fork):
-                console.print("  " + repo)
-            console.print()
+            on_release = sorted(set(no_fork) | {r for r, _, _ in wrong_naming} | set(checked_out_failed))
+            if on_release:
+                console.print("[bold yellow]On release branch[/bold yellow]")
+                for repo in on_release:
+                    console.print("  " + repo)
+        else:
+            if has_fork_correct:
+                console.print("[bold green]Has fork + correct branch ({})[/bold green]".format(expected_branch))
+                for repo in sorted(has_fork_correct):
+                    console.print("  " + repo)
+                console.print()
 
-        if wrong_naming:
-            console.print("[bold magenta]Fork but wrong naming[/bold magenta]")
-            for repo_name, branches, expected in wrong_naming:
-                console.print("  {} (has: {}, expected: {})".format(
-                    repo_name, ", ".join(branches), expected
-                ))
-            console.print()
+            if no_fork:
+                console.print("[bold yellow]No fork[/bold yellow]")
+                for repo in sorted(no_fork):
+                    console.print("  " + repo)
+                console.print()
 
-        if checked_out_ok:
-            console.print("[bold green]Successfully checked out[/bold green]")
-            for repo in sorted(checked_out_ok):
-                console.print("  " + repo)
-            console.print()
+            if wrong_naming:
+                console.print("[bold magenta]Fork but wrong naming[/bold magenta]")
+                for repo_name, branches, expected in wrong_naming:
+                    console.print("  {} (has: {}, expected: {})".format(
+                        repo_name, ", ".join(branches), expected
+                    ))
+                console.print()
 
-        if checked_out_failed:
-            console.print("[bold red]Checkout failed[/bold red]")
-            for repo in sorted(checked_out_failed):
-                console.print("  " + repo)
+            if checked_out_ok:
+                console.print("[bold green]Successfully checked out[/bold green]")
+                for repo in sorted(checked_out_ok):
+                    console.print("  " + repo)
+                console.print()
+
+            if checked_out_failed:
+                console.print("[bold red]Checkout failed[/bold red]")
+                for repo in sorted(checked_out_failed):
+                    console.print("  " + repo)
