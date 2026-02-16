@@ -304,3 +304,15 @@ class ArpGitWorker:
                 console.print("[bold red]Checkout failed[/bold red]")
                 for repo in sorted(checked_out_failed):
                     console.print("  " + repo)
+
+        console.print()
+        console.print(Panel(
+            "If new cert generation is required, run:\n\n"
+            "  rm -rf $CEDAR_HOME/CEDAR_CA\n"
+            "  cedarcli cert setup\n"
+            "  cedarcli cert ca\n"
+            "  cedarcli cert domains\n"
+            "  cedarcli docker one-time-setup",
+            title="[dim]Optional: New cert setup[/dim]",
+            style="dim",
+        ))
