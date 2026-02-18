@@ -170,6 +170,14 @@ docker volume rm log_frontend_bridging
         )
 
     @staticmethod
+    def start_infrastructure_ext():
+        Worker.execute_generic_shell_commands(
+            ['docker-compose -f docker-compose.yml -f docker-compose-external-volumes.yml up'],
+            title="Starting CEDAR infrastructure services (external volumes)",
+            cwd=os.path.join(Util.cedar_home, 'cedar-docker-deploy', 'cedar-infrastructure')
+        )
+
+    @staticmethod
     def start_microservices():
         Worker.execute_generic_shell_commands(
             ['docker-compose up'],
@@ -178,10 +186,26 @@ docker volume rm log_frontend_bridging
         )
 
     @staticmethod
+    def start_microservices_ext():
+        Worker.execute_generic_shell_commands(
+            ['docker-compose -f docker-compose.yml -f docker-compose-external-volumes.yml up'],
+            title="Starting CEDAR microservices (external volumes)",
+            cwd=os.path.join(Util.cedar_home, 'cedar-docker-deploy', 'cedar-microservices')
+        )
+
+    @staticmethod
     def start_frontends():
         Worker.execute_generic_shell_commands(
             ['docker-compose up'],
             title="Starting CEDAR frontends",
+            cwd=os.path.join(Util.cedar_home, 'cedar-docker-deploy', 'cedar-frontend')
+        )
+
+    @staticmethod
+    def start_frontends_ext():
+        Worker.execute_generic_shell_commands(
+            ['docker-compose -f docker-compose.yml -f docker-compose-external-volumes.yml up'],
+            title="Starting CEDAR frontends (external volumes)",
             cwd=os.path.join(Util.cedar_home, 'cedar-docker-deploy', 'cedar-frontend')
         )
 
